@@ -1,14 +1,21 @@
 class LogLineParser
+  LOG_LEVEL_PATTERN = /(?<=\[)([[:upper:]]+)(?=\]:)/
+  MESSAGE_PATTERN = /[\[\][:upper:]]+: (.+)/
+  
   def initialize(line)
     @line = line
   end
   def message
-    @line.split(':')[1].strip
+    log_line = @line
+    match = MESSAGE_PATTERN.match(log_line)
+    return match.captures[0]&.strip
   end
   def log_level
-    @line.split(':')[0].downcase.slice(1..-2)
+    log_line = @line
+    match = LOG_LEVEL_PATTERN.match(log_line)
+    return match.captures[0]&.strip&.downcase
   end
   def reformat
-    String.new("#{message} (#{log_level})")
+    "#{message} (#{log_level})"
   end
 end
