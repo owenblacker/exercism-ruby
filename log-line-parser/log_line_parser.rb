@@ -1,20 +1,26 @@
 class LogLineParser
-  LOG_LEVEL_PATTERN = /(?<=\[)([[:upper:]]+)(?=\]:)/
-  MESSAGE_PATTERN = /[\[\][:upper:]]+: (.+)/
+  REGEX = {
+    level: /(?<=\[)([[:upper:]]+)(?=\]:)/,
+    message: /[\[\][:upper:]]+: (.+)/
+  }
+  private_constant :REGEX
+  attr_reader :line
   
-  def initialize(line)
-    @line = line
+  def initialize(input_line)
+    @line = input_line
   end
+
   def message
-    log_line = @line
-    match = MESSAGE_PATTERN.match(log_line)
+    # debug "`@line`: #{@line}, `:line`: #{:line}, `line`: #{line}"
+    match = line.match REGEX[:message]
     return match.captures[0]&.strip
   end
+
   def log_level
-    log_line = @line
-    match = LOG_LEVEL_PATTERN.match(log_line)
+    match = line.match REGEX[:level]
     return match.captures[0]&.strip&.downcase
   end
+
   def reformat
     "#{message} (#{log_level})"
   end
